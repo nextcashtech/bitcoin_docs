@@ -1,10 +1,18 @@
 # Authentication
 
-To initiate authentication the user sends an HTTP GET request to the path `https://<hostname><prefix>/auth/<account_key>` where the `<hostname><prefix>` is published by the service and `<account_key>` is the hex encoded public key the user wants to use to authenticate with the service.
+## Peer to Peer
 
-The response will be HTTP 201 (Created) and the response body will either JSON or BSOR depending on the request header's `Accept` value. `application/json` for JSON or `application/octet-stream` for BSOR.
+Peer to peer authentication simply involves signing messages with a key the peer knows.
 
-This is the structure:
+## Client to Service
+
+Client to service authentication is simply proving the client is the owner of a specific key and then building a relationship around that key. A client can authenticate with any key and then use that service via that key.
+
+To initiate authentication the client sends an HTTP GET request to the path `https://<hostname><path_prefix>/auth/<account_key>` where the `<hostname><path_prefix>` is published by the service and `<account_key>` is the hex encoded public key the client wants to use to authenticate with the service.
+
+The success response will be HTTP 201 (Created) and the response body will either be JSON or BSOR depending on the request header's `Accept` value. `application/json` for JSON or `application/octet-stream` for BSOR.
+
+This is the response structure:
 
 ```
 	PublicKey       bitcoin.PublicKey `json:"public_key" bsor:"1"`
@@ -14,7 +22,7 @@ This is the structure:
 	Expiry          uint64            `json:"expiry" bsor:"5"`
 ```
 
-The user then must calculate the SHA256 hash of this message using the following data:
+The client then must calculate the SHA256 hash of this message using the following data:
 
 ```
 	PublicKey - 33 byte compressed value
@@ -23,9 +31,9 @@ The user then must calculate the SHA256 hash of this message using the following
 	Expiry - 8 byte little endian
 ```
 
-The user then must sign this hash with the private key of the account key provided in the initial request and post that with an HTTP POST request to the same URL `https://<hostname><prefix>/messages/v1/auth/<account_key>`. The body of the request can be JSON or BSOR with the corresponding HTTP header `Content-Type` value. `application/json` for JSON or `application/octet-stream` for BSOR.
+The client then must sign this hash with the private key of the account key provided in the initial request and post that with an HTTP POST request to the same URL `https://<hostname><path_prefix>/auth/<account_key>`. The body of the request can be JSON or BSOR with the corresponding HTTP header `Content-Type` value. `application/json` for JSON or `application/octet-stream` for BSOR.
 
-This is the body structure:
+This is the body structure of the HTTP POST request:
 
 ```
 	Hash      bitcoin.Hash32    `json:"hash" bsor:"1"`

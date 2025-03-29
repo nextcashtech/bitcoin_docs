@@ -10,9 +10,9 @@ To encrypt a message to a channel the sender parses the recipient's public key f
 
 A channel is a specific URL that can be posted to via an HTTP post request. The owner of the channel will receive the HTTP request body contents and 'Content-Type' header value.
 
-This is an example channel URL. It can have any host and prefix at the beginning but must end with "/messages/v1/channels/" followed by the hex encoding of the compressed public key. A compressed public key is 66 hex characters, representing 33 bytes, starting with '02' or '03'. This ensures the public key can always be easily parsed from the URL.
+This is an example channel URL. It can have any host and prefix path at the beginning but must end with "/channels/" followed by the hex encoding of the compressed public key. A compressed public key is 66 hex characters, representing 33 bytes, starting with '02' or '03'. This ensures the public key can always be easily parsed from the URL.
 
-`https://nextcash.tech/messages/v1/channels/<public_key>`
+`https://messages.nextcash.tech/channels/<public_key>`
 
 ## API (Appliation Programming Interface)
 
