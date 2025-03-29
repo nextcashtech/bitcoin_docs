@@ -4,6 +4,8 @@
 
 Peer to peer authentication simply involves signing messages with a key the peer knows.
 
+TODO - Describe Envelope Signing protocol.
+
 ## Client to Service
 
 Client to service authentication is simply proving the client is the owner of a specific key and then building a relationship around that key. A client can authenticate with any key and then use that service via that key.
