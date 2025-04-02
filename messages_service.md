@@ -1,8 +1,8 @@
 # Messages Service
 
-The messages service provides HTTP URLs for a client to receive messages. Since most users won't have domain names or want to host web services this is required for peer to peer and client to service communication. The messages should be signed and encrypted whenever possible so little to no trust is required for the messaging service. The service must simply stay up and deliver messages to the appropriate recipients.
+The messages service provides HTTP URLs for a client to receive messages. Since most users won't have domain names or want to host web services this is required for peer to peer and two-way client to service communication. The messages should be signed and encrypted whenever possible so little to no trust is required for the messaging service. The service must simply stay up and deliver messages to the appropriate recipients.
 
-A client authenticates with the service using a secp256k1 key. Then the client can create channels to receive messages. Each channel is associated with a specific key and contains that in the URL to post to that channel. This enables a client to simply provide the URL to someone else and they can parse the public key from the URL to know the public key to use to communicate with them.
+A client authenticates with the service using a Bitcoin (secp256k1) key. Then the client can create channels to receive messages. Each channel is associated with a specific key and contains that in the URL to post to that channel. This enables a client to simply provide the URL to someone else and they can parse the public key from the URL to know the public key to use to communicate with them.
 
 To encrypt a message to a channel the sender parses the recipient's public key from the channel URL then calculates the ECDH secret between the sender's private key and the channel's public key and uses that to encrypt the message. The message should also include the sender's unencrypted public key so the recipient knows how to decrypt the encrypted contents of the message.
 
