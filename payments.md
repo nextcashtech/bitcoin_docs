@@ -57,6 +57,12 @@ The next push data is interpreted as a fee rate. The fee rate is the following [
 	ByteCount uint64 `json:"byte_count" bsor:"2"` // quantity of bytes to charge satoshis
 ```
 
+## Note (NOTE)
+
+The protocol identifier is ASCII "NOTE" or binary 0x4e4f5445.
+
+A single push data is interpreted as ASCII text.
+
 ## Encrypt (E)
 
 The protocol identifier is ASCII "E" or binary 0x45.

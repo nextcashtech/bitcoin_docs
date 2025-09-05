@@ -10,7 +10,7 @@ TODO - Describe Envelope Signing protocol.
 
 Client to service authentication is simply proving the client is the owner of a specific key and then building a relationship around that key. A client can authenticate with any key and then use that service via that key.
 
-To initiate authentication the client sends an HTTP GET request to the path `https://<hostname><path_prefix>/auth/<account_key>` where the `<hostname><path_prefix>` is published by the service and `<account_key>` is the hex encoded public key the client wants to use to authenticate with the service.
+To initiate authentication the client sends an HTTP GET request to the path specified in the service definition that is provided by the service.
 
 The success response will be HTTP 201 (Created) and the response body will either be JSON or BSOR depending on the request header's `Accept` value. `application/json` for JSON or `application/octet-stream` for BSOR.
 
@@ -27,13 +27,14 @@ This is the response structure:
 The client then must calculate the SHA256 hash of this message using the following data:
 
 ```
+	Identifier - string "AUTH" (this ensures the signature is specific to authentication)
 	PublicKey - 33 byte compressed value
 	Nonce - 32 bytes
 	Issued - 8 byte little endian
 	Expiry - 8 byte little endian
 ```
 
-The client then must sign this hash with the private key of the account key provided in the initial request and post that with an HTTP POST request to the same URL `https://<hostname><path_prefix>/auth/<account_key>`. The body of the request can be JSON or BSOR with the corresponding HTTP header `Content-Type` value. `application/json` for JSON or `application/octet-stream` for BSOR.
+The client then must sign this hash with the private key of the account key provided in the initial request and post that with an HTTP POST request to the same path specified in the service definition that is provided by the service. The body of the request can be JSON or BSOR with the corresponding HTTP header `Content-Type` value. `application/json` for JSON or `application/octet-stream` for BSOR.
 
 This is the body structure of the HTTP POST request:
 

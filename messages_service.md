@@ -6,6 +6,8 @@ A client authenticates with the service using a Bitcoin (secp256k1) key. Then th
 
 To encrypt a message to a channel the sender parses the recipient's public key from the channel URL then calculates the ECDH secret between the sender's private key and the channel's public key and uses that to encrypt the message. The message should also include the sender's unencrypted public key so the recipient knows how to decrypt the encrypted contents of the message.
 
+The messages service supports the standard [service](services.md) functionality.
+
 ## Channels
 
 A channel is a specific URL that can be posted to via an HTTP post request. The owner of the channel will receive the HTTP request body contents and 'Content-Type' header value.
@@ -22,49 +24,15 @@ Documentation for authentication is provided [here](authentication.md).
 
 ## Administration
 
-When an account is created a private channel will be established with the account key. Posting to this channel will result in an HTTP status 404 (Not found). The channel will be used for messages from the service to the client, like payment requests. The client can respond to these messages on the channel corresponding to the service's key.
+When an account is created a private channel will be established with the account/authentication key. Posting to this channel via an HTTP URL will result in an HTTP status 404 (Not found). Only the service can post messages to this channel. The channel will be used for messages from the service to the client, like payment requests. The client can respond to these messages on the channel corresponding to the service's key.
 
 ## Fees
 
-Fees will be charged for certain actions within an account. The client is responsible for maintaining a balance on the account and if they do not then their services will be disabled.
+Fees will be charged for certain actions within an account. The client is responsible for maintaining a balance on the account and if they do not then their services will be disabled until a payment is made.
 
-When an account's balance is getting low the service will post a payment request on the account's administration channel so the client can keep the account in good standing. The client should respond by completing the payment request and posting it to the service's channel. If the client wants to pay a different amount they can modify the payment request with the endpoint for creating a specific payment request.
-
-## Media Type
-
-Unless otherwise specified the media types for API requests depends on the `Content-Type` header of the request and the media type of the response depends on the `Accept` header of the request. The `Content-Type` header of the response will confirm its media type. The fields for each media type are specified in the definition of each endpoint.
-
-* `application/json` specifies JSON.
-* `application/octet-stream` specifies [BSOR](https://github.com/tokenized/pkg/tree/master/bsor).
+When an account's balance is getting low the service will post a payment request on the account's administration channel so the client can keep the account in good standing. The client should respond by completing the payment request and posting it to the service's channel. If the client wants to pay a different amount they can modify the payment request with the endpoint for creating a specific payment request. If the account's balance gets too low then messages can no longer be received. The admin channel will remain functional to facilitate payments to the service to re-activate the account.
 
 ## API (Application Programming Interface)
-
-### Service Information
-
-HTTP GET Request to URL - `https://<hostname><path_prefix>/service`
-
-No HTTP request header `Authorization` value needed.
-
-The success response will be HTTP status 200 (OK) with the following data structure in the body:
-```
-	PublicKey bitcoin.PublicKey `json:"public_key" bsor:"1"`
-	Fees      Fees              `json:"fees" bsor:"2"`
-```
-
-`PublicKey` is the public key of the service. Some messages, like payment requests, will be encrypted and signed with this key. Also, a channel will be created for this key that will be used for client administration messages.
-
-`Fees` is the following data structure:
-```
-	MinimumBalance int64  `json:"minimum_balance" bsor:"1"`
-	Message        uint64 `json:"message" bsor:"2"`
-	CreateChannel  uint64 `json:"create_channel" bsor:"3"`
-```
-
-`MinimumBalance` is the balance below which only your admin channel will work to provide the client with payment requests. Other channels will return errors when they are posted to. Some services may choose to allow clients to have a negative balance as this can be useful for getting a new wallet funded.
-
-`Message` is the fee per message posted to one of the account's channels.
-
-`CreateChannel` is the fee for creating a new channel under an account.
 
 ### Post Message
 
@@ -120,11 +88,8 @@ The account is determined via the token in the HTTP request header `Authorizatio
 
 The success response will be an HTTP status 200 (OK) with the following data structure in the body:
 ```
-	Balance     int64               `json:"balance" bsor:"1"`
-	ChannelKeys []bitcoin.PublicKey `json:"channels" bsor:"2"`
+	ChannelKeys []bitcoin.PublicKey `json:"channels" bsor:"1"`
 ```
-
-`Balance` is the current satoshi balance of the account. Any fee based actions will be deducted from this balance as they happen.
 
 `ChannelKeys` is a list of public keys that are associated with current channels.
 
@@ -166,13 +131,10 @@ The success response is an HTTP status 200 (OK) with an empty body.
 
 ### Create Specific Payment Request
 
-HTTP POST Request to URL - `https://<hostname><path_prefix>/accounts/payment`
+HTTP GET Request to URL - `https://<hostname><path_prefix>/payments/<value>`
 
 The account is determined via the token in the HTTP request header `Authorization` value.
 
-The data structure of the request body must be the following:
-```
-	Quantity uint64 `json:"quantity" bsor:"1"`
-```
+If value is left empty then the service will determine how much to request based on the current balance and minimum balances.
 
-The success response will be an HTTP status 201 (Created) and the body will be and [Envelope containing a payment request](payments.md).
+The success response will be an HTTP status 201 (Created) and the body will be an [Envelope containing a payment request](payments.md).
