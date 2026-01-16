@@ -18,7 +18,9 @@ This is an example channel URL. It can have any host and prefix path at the begi
 
 ## Authentication
 
-No authentiation is required to post messages to a channel URL. Authentication is required to connect to the service as a client that can create channels and receive messages.
+Authentication is required to connect to the service as a client that can create channels and receive messages.
+
+No authentiation is required to post messages to a channel URL unless the channel requires payment to post messages. Then an account must be established and authentication used when posting the message so to authorize the charge to the account.
 
 Documentation for authentication is provided [here](authentication.md).
 

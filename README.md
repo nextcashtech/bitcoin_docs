@@ -19,3 +19,7 @@ A [messages service](messages_service.md) provides HTTP URLs for a user to recei
 ### Paymail Service
 
 A [paymail service](paymail_service.md) provides wallets the ability to create paymail handles to receive payments.
+
+### Headers Service
+
+A [headers service](headers_service.md) provides wallets the ability to keep up to date with Bitcoin block headers so they can verify chain POW and tx merkle paths.

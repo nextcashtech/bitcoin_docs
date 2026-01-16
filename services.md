@@ -23,7 +23,7 @@ Documentation for initiation is provided [here](initiation.md).
 
 ## Payments
 
-Services require payments to cover costs and provide profit to the provider.
+Services require payments to cover costs and provide revenue to the provider.
 
 Documentation for payments is provided [here](payments.md).
 
@@ -92,7 +92,7 @@ Fees specify the fees that will be charged for the usage of the service.
 
 `Token` is text to identify the token being used. Empty or BSV means the tokens are satoshis.
 
-`Frequency` is an integer representing a duration:
+`Frequency` is an 8 bit (1 byte) integer representing a duration:
 * 1 - second
 * 2 - minute
 * 3 - hour
